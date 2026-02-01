@@ -5,8 +5,8 @@ class MiJuego(GameBase):
     def __init__(self) -> None:
         meta = GameMetadata(
             title="Purely Placed",
-            description="Test de ventana",
-            authors=["Tu Nombre"],
+            description="Purely Placed es un juego para niños con tdh",
+            authors=["Juan Fernandez","Anelissa Espin","Erick Gomez","Katherin Apellido"],
             group_number=4 
         )
         super().__init__(meta)
