@@ -1,5 +1,10 @@
 import pygame
 from enfocate import COLORS
+import os
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).resolve().parent.parent.parent
+
 # Mantengo el import por si lo usas, si da error puedes comentarlo con #
 try:
     from settings import *
@@ -58,10 +63,26 @@ class Button:
 
 class MenuState:
     def __init__(self):
-        # Mantenemos 'assest' como pediste
-        self.img_fondo = pygame.image.load("assest/images/menu/fondo.png")
-        self.img_titulo = pygame.image.load("assest/images/menu/titulobg.png")
-        self.img_cuadritos = pygame.image.load("assest/images/menu/cuadritosbg.png")
+        
+        folder = "assest" 
+
+        path_fondo = ROOT_DIR / folder / "images" / "menu" / "fondo.png"
+        path_titulo = ROOT_DIR / folder / "images" / "menu" / "titulobg.png"
+        path_cuadritos = ROOT_DIR / folder / "images" / "menu" / "cuadritosbg.png"
+
+        # 3. Cargamos con un try/except para que si falla, nos diga EXACTAMENTE dónde buscó
+        try:
+            self.img_fondo = pygame.image.load(str(path_fondo))
+            self.img_titulo = pygame.image.load(str(path_titulo))
+            self.img_cuadritos = pygame.image.load(str(path_cuadritos))
+        except FileNotFoundError:
+            print(f"\n--- ERROR DE RUTA ---")
+            print(f"No se encontró la imagen en: {path_fondo}")
+            print(f"Asegúrate de que la carpeta '{folder}' esté en la raíz del proyecto.")
+            # Crear superficies de respaldo para que el juego no se cierre
+            self.img_fondo = pygame.Surface((1280, 720))
+            self.img_titulo = pygame.Surface((200, 50))
+            self.img_cuadritos = pygame.Surface((200, 50))
         
         # Inicializamos los botones dentro del estado del menú
         # Ajusté las posiciones Y (350 y 450) para que no tapen el título
