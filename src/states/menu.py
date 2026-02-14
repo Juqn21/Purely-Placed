@@ -13,40 +13,41 @@ class Button:
         self.font = None
         self.pressed = False
 
-    def draw_text_with_outline(self, screen, text, font, pos, text_color, outline_color):
-        """Dibuja el texto con un borde negro grueso alrededor"""
-        # Renderizamos el contorno negro desplazando el texto en las 8 direcciones
-        for dx, dy in [(-2, -2), (2, -2), (-2, 2), (2, 2), (0, -2), (0, 2), (-2, 0), (2, 0)]:
-            outline_surf = font.render(text, True, outline_color)
-            outline_rect = outline_surf.get_rect(center=(pos[0] + dx, pos[1] + dy))
-            screen.blit(outline_surf, outline_rect)
-        
-        # Dibujamos el texto principal (blanco) encima
+    def draw_text_simple(self, screen, text, font, pos, text_color):
+        """Dibuja el texto limpio, sin bordes"""
         text_surf = font.render(text, True, text_color)
         text_rect = text_surf.get_rect(center=pos)
         screen.blit(text_surf, text_rect)
 
     def draw(self, screen):
         if self.font is None:
-            path_fuente = ROOT_DIR / "assest" / "fonts" / "FlatorySlapCondensed.ttf" 
+            path_fuente = ROOT_DIR / "assets" / "fonts" / "flatory-slab-condensed.ttf" 
             try:
-                # Cargamos la fuente (tamaño 45 para que se vea imponente como en Canva)
                 self.font = pygame.font.Font(str(path_fuente), 45)
             except:
-                self.font = pygame.font.SysFont("Arial", 45, bold=True)
+                self.font = pygame.font.SysFont("Arial", 45, bold=False)
+        
             
         mouse_pos = pygame.mouse.get_pos()
         is_hover = self.rect.collidepoint(mouse_pos)
         
-        # NO dibujamos pygame.draw.rect (para que no tenga cuadrados alrededor)
-        
-        # Definimos colores según el estado
-        color_texto = (255, 255, 255) # Blanco
+        # Color del texto según el estado
+        color_texto = (255, 255, 255) # Blanco puro
         if is_hover:
-            color_texto = (200, 200, 200) # Gris claro al pasar el mouse
+            color_texto = (180, 180, 180) # Un gris más elegante para el hover
+        
+        # --- AQUÍ AUMENTAMOS EL GROSOR ---
+        text_surf = self.font.render(self.text, True, color_texto)
+        text_rect = text_surf.get_rect(center=self.rect.center)
+        
+        # Dibujamos el texto dos veces, con 1 píxel de diferencia a la derecha
+        # Esto crea un efecto de "negrita" sutil y limpio
+        screen.blit(text_surf, text_rect)
+        screen.blit(text_surf, (text_rect.x + 1, text_rect.y))
 
-        # Dibujamos el texto con el borde negro (outline)
-        self.draw_text_with_outline(screen, self.text, self.font, self.rect.center, color_texto, (0, 0, 0))
+        # Llamamos a la nueva función simple
+        self.draw_text_simple(screen, self.text, self.font, self.rect.center, color_texto)
+        
 
     def is_clicked_no_event(self):
         mouse_pos = pygame.mouse.get_pos()
@@ -64,7 +65,7 @@ class Button:
 
 class MenuState:
     def __init__(self):
-        folder = "assest" 
+        folder = "assets" 
         path_fondo = ROOT_DIR / folder / "images" / "menu" / "fondo.png"
         path_titulo = ROOT_DIR / folder / "images" / "menu" / "titulobg.png"
         path_cuadritos = ROOT_DIR / folder / "images" / "menu" / "cuadritosbg.png"
@@ -81,7 +82,7 @@ class MenuState:
         # BOTONES "SOLITOS" (Solo texto con borde)
         # Ajusta las posiciones X e Y para que caigan justo donde quieres
         self.btn_start = Button(950, 230, 200, 60, "Jugar", "SELECTOR")
-        self.btn_config = Button(1000, 310, 250, 60, "Configuración", "CONFIG")
+        self.btn_config = Button(990, 310, 250, 60, "Configuración", "CONFIG")
         self.btn_exit = Button(950, 390, 200, 60, "Salir", "EXIT")
         
     def handle_events(self, events):
