@@ -6,53 +6,71 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 
 class Button:
-    def __init__(self, x, y, width, height, text, target):
+    def __init__(self, x, y, width, height, text, target, image_path=None):
         self.rect = pygame.Rect(x, y, width, height)
         self.text = text
         self.target = target
         self.font = None
         self.pressed = False
-
-    def draw_text_simple(self, screen, text, font, pos, text_color):
-        """Dibuja el texto limpio, sin bordes"""
-        text_surf = font.render(text, True, text_color)
-        text_rect = text_surf.get_rect(center=pos)
-        screen.blit(text_surf, text_rect)
+        self.image = None
+        self.mask = None
+        
+        if image_path:
+            try:
+                self.image = pygame.image.load(str(image_path)).convert_alpha()
+                self.rect = self.image.get_rect(topleft=(x, y))
+                
+                self.mask = pygame.mask.from_surface(self.image)
+            except:
+                print(f"Error cargando: {image_path}")
 
     def draw(self, screen):
-        if self.font is None:
-            path_fuente = ROOT_DIR / "assets" / "fonts" / "flatory-slab-condensed.ttf" 
-            try:
-                self.font = pygame.font.Font(str(path_fuente), 45)
-            except:
-                self.font = pygame.font.SysFont("Arial", 45, bold=False)
-        
-            
         mouse_pos = pygame.mouse.get_pos()
-        is_hover = self.rect.collidepoint(mouse_pos)
-        
-        # Color del texto según el estado
-        color_texto = (255, 255, 255) # Blanco puro
-        if is_hover:
-            color_texto = (180, 180, 180) # Un gris más elegante para el hover
-        
-        # --- AQUÍ AUMENTAMOS EL GROSOR ---
-        text_surf = self.font.render(self.text, True, color_texto)
-        text_rect = text_surf.get_rect(center=self.rect.center)
-        
-        # Dibujamos el texto dos veces, con 1 píxel de diferencia a la derecha
-        # Esto crea un efecto de "negrita" sutil y limpio
-        screen.blit(text_surf, text_rect)
-        screen.blit(text_surf, (text_rect.x + 1, text_rect.y))
+        is_hover = False
+        if self.image and self.mask:
+            pos_in_mask = (mouse_pos[0] - self.rect.x, mouse_pos[1] - self.rect.y)
+            if self.rect.collidepoint(mouse_pos) and self.mask.get_at(pos_in_mask):
+                is_hover = True
+        else:
+            is_hover = self.rect.collidepoint(mouse_pos)
 
-        # Llamamos a la nueva función simple
-        self.draw_text_simple(screen, self.text, self.font, self.rect.center, color_texto)
-        
+        if self.image:
+            if is_hover:
+                temp_img = self.image.copy()
+                temp_img.fill((40, 40, 40), special_flags=pygame.BLEND_RGB_ADD)
+                screen.blit(temp_img, self.rect)
+            else:
+                screen.blit(self.image, self.rect)
+        else:
+            if self.font is None:
+                path_fuente = ROOT_DIR / "assets" / "fonts" / "flatory-slab-condensed.ttf" 
+                try:
+                    self.font = pygame.font.Font(str(path_fuente), 45)
+                except:
+                    self.font = pygame.font.SysFont("Arial", 45)
+
+            color_texto = (255, 255, 255)
+            if is_hover:
+                color_texto = (180, 180, 180)
+
+            text_surf = self.font.render(self.text, True, color_texto)
+            text_rect = text_surf.get_rect(center=self.rect.center)
+            screen.blit(text_surf, text_rect)
+            screen.blit(text_surf, (text_rect.x + 1, text_rect.y))
 
     def is_clicked_no_event(self):
         mouse_pos = pygame.mouse.get_pos()
         mouse_state = pygame.mouse.get_pressed()
-        if self.rect.collidepoint(mouse_pos):
+        
+        click_valido = False
+        if self.image and self.mask:
+            pos_in_mask = (mouse_pos[0] - self.rect.x, mouse_pos[1] - self.rect.y)
+            if self.rect.collidepoint(mouse_pos) and self.mask.get_at(pos_in_mask):
+                click_valido = True
+        else:
+            click_valido = self.rect.collidepoint(mouse_pos)
+
+        if click_valido:
             if mouse_state[0]:
                 self.pressed = True
             else:
@@ -62,7 +80,7 @@ class Button:
         else:
             self.pressed = False
         return False
-
+    
 class MenuState:
     def __init__(self):
         folder = "assets" 

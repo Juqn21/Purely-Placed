@@ -5,7 +5,8 @@ from enfocate import GameBase, GameMetadata, COLORS
 
 # Importamos los estados
 from .states.menu import MenuState
-from .states.juego import LevelSelector, Level
+from .states.selector import LevelSelectorState
+from .states.juego import Level
 from .states.game_over import GameOver
 
 class MiJuego(GameBase):
@@ -29,7 +30,7 @@ class MiJuego(GameBase):
         # Ahora sí creamos los estados con seguridad
         self.states = {
             "MAIN_MENU": MenuState(),
-            "SELECTOR": LevelSelector(),
+            "SELECTOR": LevelSelectorState(),
             "LEVEL 1": Level(1),
             "LEVEL 2": Level(2),
             "LEVEL 3": Level(3),
@@ -54,9 +55,6 @@ class MiJuego(GameBase):
             self.current_state = new_state
 
     def draw(self):
-        """Renderizado en la superficie del motor"""
-        # Limpiamos fondo
         self.surface.fill(COLORS.get("carbon_oscuro", (30, 30, 30)))
-        
-        # Dibujamos el estado activo
+    
         self.states[self.current_state].draw(self.surface)
