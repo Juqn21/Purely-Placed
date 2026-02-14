@@ -5,117 +5,95 @@ from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 
-# Mantengo el import por si lo usas, si da error puedes comentarlo con #
-try:
-    from settings import *
-except ImportError:
-    pass
-
 class Button:
-    def __init__(self, x, y, width, height, text, target, color=(167, 215, 232)):
+    def __init__(self, x, y, width, height, text, target):
         self.rect = pygame.Rect(x, y, width, height)
         self.text = text
         self.target = target
-        self.base_color = color
         self.font = None
-        self.pressed = False  # Para evitar que el clic se repita infinitamente
+        self.pressed = False
+
+    def draw_text_with_outline(self, screen, text, font, pos, text_color, outline_color):
+        """Dibuja el texto con un borde negro grueso alrededor"""
+        # Renderizamos el contorno negro desplazando el texto en las 8 direcciones
+        for dx, dy in [(-2, -2), (2, -2), (-2, 2), (2, 2), (0, -2), (0, 2), (-2, 0), (2, 0)]:
+            outline_surf = font.render(text, True, outline_color)
+            outline_rect = outline_surf.get_rect(center=(pos[0] + dx, pos[1] + dy))
+            screen.blit(outline_surf, outline_rect)
+        
+        # Dibujamos el texto principal (blanco) encima
+        text_surf = font.render(text, True, text_color)
+        text_rect = text_surf.get_rect(center=pos)
+        screen.blit(text_surf, text_rect)
 
     def draw(self, screen):
-        # Carga perezosa de la fuente para evitar errores de inicialización
         if self.font is None:
-            self.font = pygame.font.SysFont("Arial", 30)
+            path_fuente = ROOT_DIR / "assest" / "fonts" / "FlatorySlapCondensed.ttf" 
+            try:
+                # Cargamos la fuente (tamaño 45 para que se vea imponente como en Canva)
+                self.font = pygame.font.Font(str(path_fuente), 45)
+            except:
+                self.font = pygame.font.SysFont("Arial", 45, bold=True)
             
         mouse_pos = pygame.mouse.get_pos()
-        # Cambia de color si el mouse está encima
-        color = (184, 213, 179) if self.rect.collidepoint(mouse_pos) else self.base_color
+        is_hover = self.rect.collidepoint(mouse_pos)
         
-        # Dibujo del botón
-        pygame.draw.rect(screen, color, self.rect, border_radius=12)
-        pygame.draw.rect(screen, (99, 66, 46), self.rect, 3, border_radius=12)
+        # NO dibujamos pygame.draw.rect (para que no tenga cuadrados alrededor)
         
-        # Texto centrado
-        txt_surface = self.font.render(self.text, True, (99, 66, 46))
-        txt_rect = txt_surface.get_rect(center=self.rect.center)
-        screen.blit(txt_surface, txt_rect)
+        # Definimos colores según el estado
+        color_texto = (255, 255, 255) # Blanco
+        if is_hover:
+            color_texto = (200, 200, 200) # Gris claro al pasar el mouse
+
+        # Dibujamos el texto con el borde negro (outline)
+        self.draw_text_with_outline(screen, self.text, self.font, self.rect.center, color_texto, (0, 0, 0))
 
     def is_clicked_no_event(self):
-        """
-        Detecta el clic usando el estado del hardware.
-        Es la forma más segura cuando el motor del juego 'roba' los eventos.
-        """
         mouse_pos = pygame.mouse.get_pos()
-        mouse_state = pygame.mouse.get_pressed() # [izq, centro, der]
-        
-        # Si el mouse está sobre el botón
+        mouse_state = pygame.mouse.get_pressed()
         if self.rect.collidepoint(mouse_pos):
-            # Si se está presionando el botón izquierdo
             if mouse_state[0]:
                 self.pressed = True
             else:
-                # Si se presionó y se soltó, ¡es un clic válido!
                 if self.pressed:
                     self.pressed = False
                     return True
         else:
             self.pressed = False
-            
         return False
 
 class MenuState:
     def __init__(self):
-        
         folder = "assest" 
-
         path_fondo = ROOT_DIR / folder / "images" / "menu" / "fondo.png"
         path_titulo = ROOT_DIR / folder / "images" / "menu" / "titulobg.png"
         path_cuadritos = ROOT_DIR / folder / "images" / "menu" / "cuadritosbg.png"
 
-        # 3. Cargamos con un try/except para que si falla, nos diga EXACTAMENTE dónde buscó
         try:
             self.img_fondo = pygame.image.load(str(path_fondo))
             self.img_titulo = pygame.image.load(str(path_titulo))
             self.img_cuadritos = pygame.image.load(str(path_cuadritos))
         except FileNotFoundError:
-            print(f"\n--- ERROR DE RUTA ---")
-            print(f"No se encontró la imagen en: {path_fondo}")
-            print(f"Asegúrate de que la carpeta '{folder}' esté en la raíz del proyecto.")
-            # Crear superficies de respaldo para que el juego no se cierre
             self.img_fondo = pygame.Surface((1280, 720))
             self.img_titulo = pygame.Surface((200, 50))
             self.img_cuadritos = pygame.Surface((200, 50))
         
-        # Inicializamos los botones dentro del estado del menú
-        # Ajusté las posiciones Y (350 y 450) para que no tapen el título
-        self.btn_start = Button(1030, 211, 200, 60, "START", "SELECTOR")
-        self.btn_exit = Button(1030, 418, 200, 60, "EXIT", "EXIT", color=(242, 177, 177))
-        
-        self.done = False
+        # BOTONES "SOLITOS" (Solo texto con borde)
+        # Ajusta las posiciones X e Y para que caigan justo donde quieres
+        self.btn_start = Button(950, 230, 200, 60, "Jugar", "SELECTOR")
+        self.btn_config = Button(1000, 310, 250, 60, "Configuración", "CONFIG")
+        self.btn_exit = Button(950, 390, 200, 60, "Salir", "EXIT")
         
     def handle_events(self, events):
-        # Usamos la nueva función "guerrera"
-        if self.btn_start.is_clicked_no_event():
-            print("Cambiando a SELECTOR...")
-            return "SELECTOR"
-        
-        if self.btn_exit.is_clicked_no_event():
-            return "EXIT"
-            
+        if self.btn_start.is_clicked_no_event(): return "SELECTOR"
+        if self.btn_exit.is_clicked_no_event(): return "EXIT"
         return "MAIN_MENU"
-        
-    def update(self, dt):
-        # Lógica para avanzar si presionas Enter
-        #keys = pygame.key.get_pressed()
-        # if keys[pygame.K_RETURN]:
-          ##  self.done = True
-            
-        # Aquí podrías agregar la lógica de detección de clics si pasas los eventos
-        pass
 
     def draw(self, surface):
         surface.blit(self.img_fondo, (0, 0))
         surface.blit(self.img_cuadritos, (0, 0))
         surface.blit(self.img_titulo, (0, 0))
         
-        # Solo dibujarlos, ya tienen su posición desde el init
         self.btn_start.draw(surface)
+        self.btn_config.draw(surface)
         self.btn_exit.draw(surface)
