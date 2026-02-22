@@ -1,6 +1,7 @@
 import pygame
 from enfocate import COLORS
 import os
+from src.utils.constants import *
 from pathlib import Path
 
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent

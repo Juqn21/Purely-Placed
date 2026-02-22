@@ -31,28 +31,28 @@ class MiJuego(GameBase):
         self.states = {
             "MAIN_MENU": MenuState(),
             "SELECTOR": LevelSelectorState(),
-            "LEVEL 1": Level(1),
-            "LEVEL 2": Level(2),
-            "LEVEL 3": Level(3),
-            "LEVEL 4": Level(4),
-            "LEVEL 5": Level(5),
+            "LEVEL_1": Level(1),
+            "LEVEL_2": Level(2),
+            "LEVEL_3": Level(3),
             "GAME_OVER": GameOver()
         }
 
     def update(self, dt: float):
-        # 1. NO LLAMES A pygame.event.get() AQUÍ. 
-        # Deja que el motor del SDK maneje los eventos internamente.
+        # 1. CORRECCIÓN DEL ATRIBUTO:
+        # En el SDK enfocate, la lista de eventos se guarda en self._events
+        eventos_actuales = pygame.event.get() 
 
-        # 2. Solo pide el cambio de estado
-        # Le pasamos una lista vacía [] solo para que no de error la función
-        new_state = self.states[self.current_state].handle_events([])
+        # 2. Pasamos los eventos reales al estado actual
+        new_state = self.states[self.current_state].handle_events(eventos_actuales)
         
         if new_state == "EXIT":
             pygame.quit()
             sys.exit()
             
+        # 3. Gestión de cambio de estado
         if new_state in self.states:
-            self.current_state = new_state
+            if new_state != self.current_state:
+                self.current_state = new_state
 
     def draw(self):
         self.surface.fill(COLORS.get("carbon_oscuro", (30, 30, 30)))
