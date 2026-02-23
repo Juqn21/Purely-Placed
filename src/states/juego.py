@@ -9,32 +9,45 @@ class Level:
         self.num = num
         self.font = pygame.font.SysFont("Arial", 40)
         
-     
+    
         if self.num == 1:
+
             self.mapa_logica = mapas(lista_nivel1, NIVEL1)
+
+            self.fondo = pygame.Surface((1280, 720))
+            self.fondo.fill((155, 246, 255))
+
+        if self.num == 2:
+
+            self.mapa_logica = mapas(lista_nivel2, NIVEL2)
+
+            self.fondo = pygame.Surface((1280, 720))
+            self.fondo.fill((155, 246, 255))
+
+        if self.num == 3:
+
+            self.mapa_logica = mapas(lista_nivel3, NIVEL3)
             
-            try:
-                self.fondo = pygame.image.load("fondo.png").convert()
-            except:
-                self.fondo = pygame.Surface((1280, 720))
-                self.fondo.fill((200, 200, 200))
+            self.fondo = pygame.Surface((1280, 720))
+            self.fondo.fill((155, 246, 255))
 
     def handle_events(self, events):
-       
+
         for e in events:
-           
+
             if hasattr(self, 'mapa_logica'):
                 self.mapa_logica.handle_event(e)
             
             if e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_m: return "SELECTOR"
-                if e.key == pygame.K_p: return "GAME_OVER" 
+                if e.key == pygame.K_p: return "GAME_OVER"
+                if e.key == pygame.K_ESCAPE: return "PAUSE"
         
         
         return f"LEVEL_{self.num}"
 
     def draw(self, screen):
-       
+
         if hasattr(self, 'mapa_logica'):
             self.mapa_logica.draw(screen, self.fondo)
         else:
