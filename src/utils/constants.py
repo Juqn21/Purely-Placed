@@ -77,12 +77,12 @@ NIVEL3 = {
 lista_nivel3= [
 
     {"tipo": "cesta-de-ropa", "pos": (0, 37),"pos_meta":(295, 489), "size": (240, 240), "rotation": 13},
-    {"tipo": "coleto", "pos": (4, 395),"pos_meta":(737, 489), "size": (250, 250), "rotation": 349},
+    {"tipo": "coleto", "pos": (4, 395),"pos_meta":(737, 449), "size": (250, 250), "rotation": 349},
     {"tipo": "desinfectante", "pos": (931, 55),"pos_meta":(640, 0), "size": (210, 210), "rotation": 357},
-    {"tipo": "destapador", "pos": (0, 240),"pos_meta":(358, 0), "size": (250, 250), "rotation": 27},
+    {"tipo": "destapador", "pos": (0, 240),"pos_meta":(362, 0), "size": (250, 250), "rotation": 27},
     {"tipo": "esponja", "pos": (1030, 320),"pos_meta":(432, 365), "size": (102, 102), "rotation": 343},
     {"tipo": "jabon", "pos": (1070, 50),"pos_meta":(295, 266), "size": (187, 187), "rotation": 15},
-    {"tipo": "pala", "pos": (1039, 277),"pos_meta":(264, 11), "size": (224, 224), "rotation": 13},
+    {"tipo": "pala", "pos": (1039, 277),"pos_meta":(264, 25), "size": (224, 224), "rotation": 13},
     {"tipo": "productos-limpieza", "pos": (1014, 445),"pos_meta":(535, 489), "size": (230, 230), "rotation": 7},
 
     ]

@@ -132,3 +132,7 @@ class mapas():
         for obj in self.objetos_activos:
             surface.blit(obj['img'], obj['rect'])
     
+    def nivel_completado(self):
+        """Retorna True si todos los objetos están encajados"""
+        return all(obj['encajado'] for obj in self.objetos_activos)
+    

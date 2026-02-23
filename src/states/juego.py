@@ -8,6 +8,7 @@ class Level:
     def __init__(self, num):
         self.num = num
         self.font = pygame.font.SysFont("Arial", 40)
+        self.nivel_completo_tiempo = 0
         
     
         if self.num == 1:
@@ -37,6 +38,12 @@ class Level:
 
             if hasattr(self, 'mapa_logica'):
                 self.mapa_logica.handle_event(e)
+                
+                if self.mapa_logica.nivel_completado():
+                    if self.nivel_completo_tiempo == 0:
+                        self.nivel_completo_tiempo = pygame.time.get_ticks()
+                    elif pygame.time.get_ticks() - self.nivel_completo_tiempo > 300:
+                        return "GAME_OVER"
             
             if e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_m: return "SELECTOR"

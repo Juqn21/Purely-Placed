@@ -57,6 +57,11 @@ class MiJuego(GameBase):
                 if new_state == "PAUSE":
                     self.states["PAUSE"].previous_state = self.current_state
                     self.states["PAUSE"].previous_state_obj = self.states[self.current_state]
+                elif new_state == "GAME_OVER":
+                    # Guardar el nivel actual en game_over
+                    if self.current_state.startswith("LEVEL_"):
+                        level_num = int(self.current_state.split("_")[1])
+                        self.states["GAME_OVER"].current_level = level_num
                 self.current_state = new_state
 
     def draw(self):
