@@ -28,7 +28,7 @@ class LevelSelectorState:
         self.btn_lvl3 = Button(0, 0, 200, 200, "", "LEVEL_3", path_images / "SelecN3.png")
         
         # Botón para volver (este puede ser solo texto para mantener el estilo)
-        self.btn_back = Button(50, 40, 150, 50, "Volver", "MAIN_MENU")
+        self.btn_back = Button(50, 40, 150, 50, "Volver", "MAIN_MENU", color=(22, 30, 84))
 
     def handle_events(self, events):
         if self.btn_lvl1.is_clicked_no_event(): return "LEVEL_1"

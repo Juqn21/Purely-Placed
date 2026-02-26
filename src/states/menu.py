@@ -7,11 +7,12 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent
 
 class Button:
-    def __init__(self, x, y, width, height, text, target, image_path=None):
+    def __init__(self, x, y, width, height, text, target, image_path=None, color=(255,255,255)):
         self.rect = pygame.Rect(x, y, width, height)
         self.text = text
         self.target = target
         self.font = None
+        self.color = color
         self.pressed = False
         self.image = None
         self.mask = None
@@ -50,9 +51,9 @@ class Button:
                 except:
                     self.font = pygame.font.SysFont("Arial", 45)
 
-            color_texto = (255, 255, 255)
+            color_texto = self.color
             if is_hover:
-                color_texto = (180, 180, 180)
+                color_texto = tuple(max(0, c - 75) for c in self.color)
 
             text_surf = self.font.render(self.text, True, color_texto)
             text_rect = text_surf.get_rect(center=self.rect.center)
