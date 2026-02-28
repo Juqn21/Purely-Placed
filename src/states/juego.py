@@ -1,5 +1,5 @@
 import pygame
-from src.states.menu import Button
+from src.states.menu import ROOT_DIR, Button
 from src.states.mapa import mapas
 # Importamos las listas de objetos y las rutas de imágenes desde constants
 from src.utils.constants import *
@@ -10,27 +10,38 @@ class Level:
         self.font = pygame.font.SysFont("Arial", 40)
         self.nivel_completo_tiempo = 0
         
+        path_fondo = ROOT_DIR / "assets" / "images" / f"nivel{self.num}" / f"fondo_nivel{self.num}.png"
+        
+        try:
+            # Cargamos la imagen y la escalamos al tamaño de la pantalla
+            self.fondo = pygame.image.load(str(path_fondo)).convert()
+            self.fondo = pygame.transform.scale(self.fondo, (1280, 720))
+        except FileNotFoundError:
+            # Si no encuentra la imagen, dejamos el color sólido que tenías como respaldo
+            print(f"No se encontró el fondo para el nivel {num}, usando color sólido.")
+            self.fondo = pygame.Surface((1280, 720))
+            self.fondo.fill((155, 246, 255))
     
         if self.num == 1:
 
             self.mapa_logica = mapas(lista_nivel1, NIVEL1)
 
-            self.fondo = pygame.Surface((1280, 720))
-            self.fondo.fill((155, 246, 255))
+            # self.fondo = pygame.Surface((1280, 720))
+            # self.fondo.fill((155, 246, 255))
 
         if self.num == 2:
 
             self.mapa_logica = mapas(lista_nivel2, NIVEL2)
 
-            self.fondo = pygame.Surface((1280, 720))
-            self.fondo.fill((155, 246, 255))
+            # self.fondo = pygame.Surface((1280, 720))
+            # self.fondo.fill((155, 246, 255))
 
         if self.num == 3:
 
             self.mapa_logica = mapas(lista_nivel3, NIVEL3)
             
-            self.fondo = pygame.Surface((1280, 720))
-            self.fondo.fill((155, 246, 255))
+            # self.fondo = pygame.Surface((1280, 720))
+            # self.fondo.fill((155, 246, 255))
 
     def handle_events(self, events):
 
@@ -54,10 +65,10 @@ class Level:
         return f"LEVEL_{self.num}"
 
     def draw(self, screen):
-
         if hasattr(self, 'mapa_logica'):
+            # Le pasamos 'screen' (donde dibujar) y 'self.fondo' (la imagen cargada)
             self.mapa_logica.draw(screen, self.fondo)
         else:
-            screen.fill((200, 200, 200))
-            txt = self.font.render(f"CARGANDO NIVEL {self.num}...", True, (50, 50, 50))
-            screen.blit(txt, (250, 200))
+            # Pantalla de carga si el mapa no está listo
+            screen.fill((22, 30, 84)) 
+            # ... resto del texto de carga

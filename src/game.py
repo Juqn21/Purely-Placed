@@ -1,16 +1,18 @@
 import pygame
 import sys
 from enfocate import GameBase, GameMetadata, COLORS
-
-# Importamos los estados
 from .states.menu import MenuState
 from .states.selector import LevelSelectorState
 from .states.juego import Level
 from .states.game_over import GameOver
 from .states.pausa import Pause
+from pathlib import Path
 
 class MiJuego(GameBase):
     def __init__(self) -> None:
+        self.ROOT_DIR = Path(__file__).resolve().parent.parent 
+        self.ASSETS_DIR = self.ROOT_DIR / "assets"
+        
         # 1. Metadatos del juego
         meta = GameMetadata(
             title="Purely Placed",
@@ -38,6 +40,8 @@ class MiJuego(GameBase):
             "GAME_OVER": GameOver(),
             "PAUSE": Pause()
         }
+        
+        self.cambiar_musica("menusong.mp3") # Pon el nombre exacto de tu archivo de menú
 
     def handle_events(self, events):
         self.current_events = events
@@ -53,6 +57,15 @@ class MiJuego(GameBase):
 
         if new_state in self.states:
             if new_state != self.current_state:
+                
+                if new_state == "LEVEL_1":
+                    self.cambiar_musica("nivel1song.mp3")
+                elif new_state == "LEVEL_2":
+                    self.cambiar_musica("nivel2song.mp3")
+                elif new_state == "LEVEL_3":
+                    self.cambiar_musica("nivel3song.mp3")
+                elif new_state == "MAIN_MENU":
+                    self.cambiar_musica("menusong.mp3")
 
                 if new_state == "PAUSE":
                     self.states["PAUSE"].previous_state = self.current_state
@@ -63,6 +76,16 @@ class MiJuego(GameBase):
                         level_num = int(self.current_state.split("_")[1])
                         self.states["GAME_OVER"].current_level = level_num
                 self.current_state = new_state
+    
+    def cambiar_musica(self, nombre_archivo):
+        try:
+            ruta = self.ASSETS_DIR / "music" / nombre_archivo
+            pygame.mixer.music.stop() # Detiene la música actual
+            pygame.mixer.music.load(str(ruta))
+            pygame.mixer.music.set_volume(0.5)
+            pygame.mixer.music.play(-1) # Reproduce en bucle
+        except Exception as e:
+            print(f"Error al cambiar música: {e}")
 
     def draw(self):
         self.surface.fill(COLORS.get("carbon_oscuro", (30, 30, 30)))

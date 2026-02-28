@@ -105,6 +105,15 @@ class MenuState:
         self.btn_config = Button(990, 310, 250, 60, "Configuración", "CONFIG")
         self.btn_exit = Button(950, 390, 200, 60, "Salir", "EXIT")
         
+        # Busca esta parte en tu MenuState.__init__
+        # try:
+        #     path_musica = ROOT_DIR / "assets" / "music" / "menusong.mp3" # <-- Cambiado de self.BASE_DIR a ROOT_DIR
+        #     pygame.mixer.music.load(str(path_musica))
+        #     pygame.mixer.music.set_volume(0.5)
+        #     pygame.mixer.music.play(-1)
+        # except Exception as e:
+        #     print(f"Error en MenuState: {e}")
+        
     def handle_events(self, events):
         if self.btn_start.is_clicked_no_event(): return "SELECTOR"
         if self.btn_exit.is_clicked_no_event(): return "EXIT"
