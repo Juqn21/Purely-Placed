@@ -102,8 +102,8 @@ class MenuState:
         # BOTONES "SOLITOS" (Solo texto con borde)
         # Ajusta las posiciones X e Y para que caigan justo donde quieres
         self.btn_start = Button(950, 230, 200, 60, "Jugar", "SELECTOR")
-        self.btn_config = Button(990, 310, 250, 60, "Configuración", "CONFIG")
-        self.btn_exit = Button(950, 390, 200, 60, "Salir", "EXIT")
+        # self.btn_config = Button(990, 310, 250, 60, "Configuración", "CONFIG")
+        self.btn_exit = Button(950, 310, 200, 60, "Salir", "EXIT")
         
         # Busca esta parte en tu MenuState.__init__
         # try:
@@ -125,5 +125,5 @@ class MenuState:
         surface.blit(self.img_titulo, (0, 0))
         
         self.btn_start.draw(surface)
-        self.btn_config.draw(surface)
+        #self.btn_config.draw(surface)
         self.btn_exit.draw(surface)

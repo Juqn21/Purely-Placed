@@ -73,7 +73,7 @@ class mapas():
             if event.button == 1:
                 print(f"Clic en: {event.pos}")
                 # Revisamos de arriba hacia abajo (reversed) para agarrar el que esté encima
-                for obj in reversed(self.objetos_activos):
+                for obj in self.objetos_activos:
                     print(f"Revisando objeto {obj['tipo']} en {obj['rect']}")
                     if not obj['encajado'] and obj['rect'].collidepoint(event.pos):
                         print("¡Colisión detectada!")
