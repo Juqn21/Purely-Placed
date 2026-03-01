@@ -51,9 +51,7 @@ class MiJuego(GameBase):
         new_state = self.states[self.current_state].handle_events(self.current_events)
         
         if new_state == "EXIT":
-            pygame.quit()
-            sys.exit()
-            
+            self._stop_context()
 
         if new_state in self.states:
             if new_state != self.current_state:
